@@ -1,32 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-function Counter() {
+function App() {
   const [count, setCount] = useState(0);
   const [isDestroyed, setIsDestroyed] = useState(false);
 
-  useEffect(() => {
-    let timer;
-    if (!isDestroyed) {
-      timer = setInterval(() => {
-        setCount(prevCount => prevCount + 1);
-      }, 1000); // 每秒自增1
-    }
-
-    return () => {
-      clearInterval(timer); // 组件销毁时，清除计时器
-    }
-  }, [isDestroyed]);
-
   if (isDestroyed) {
-    return <div>Component has been destroyed.</div>;
+    return <button onClick={() => setIsDestroyed(false)}>重建组件</button>;
   }
 
   return (
     <div>
       <p>Count: {count}</p>
-      <button onClick={() => setIsDestroyed(true)}>Destroy component</button>
+      <button onClick={() => setCount(count + 1)}>加一</button>
+      <button onClick={() => setIsDestroyed(true)}>销毁组件</button>
     </div>
   );
 }
 
-export default Counter;
+export default App;
