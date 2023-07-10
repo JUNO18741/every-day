@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-function Counter({ onDestroy }) {
-  const [count, setCount] = useState(0);
-
+function Counter({ count, setCount, onDestroy }) {
   useEffect(() => {
     const timer = setInterval(() => {
       setCount(prevCount => prevCount + 1);
@@ -11,7 +9,7 @@ function Counter({ onDestroy }) {
     return () => {
       clearInterval(timer);
     };
-  }, []);
+  }, [setCount]);
 
   return (
     <div>
@@ -22,6 +20,7 @@ function Counter({ onDestroy }) {
 }
 
 function App() {
+  const [count, setCount] = useState(0);
   const [showCounter, setShowCounter] = useState(true);
 
   const handleDestroy = () => {
@@ -34,7 +33,7 @@ function App() {
 
   return (
     <div>
-      {showCounter ? <Counter onDestroy={handleDestroy} /> : null}
+      {showCounter ? <Counter count={count} setCount={setCount} onDestroy={handleDestroy} /> : null}
       <button onClick={handleRecreate}>重新创建组件</button>
     </div>
   );
