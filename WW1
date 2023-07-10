@@ -1,18 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-function App() {
+function Counter({ onDestroy }) {
   const [count, setCount] = useState(0);
-  const [isDestroyed, setIsDestroyed] = useState(false);
 
-  if (isDestroyed) {
-    return <button onClick={() => setIsDestroyed(false)}>重建组件</button>;
-  }
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCount(prevCount => prevCount + 1);
+    }, 1000); 
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
 
   return (
     <div>
       <p>Count: {count}</p>
-      <button onClick={() => setCount(count + 1)}>加一</button>
-      <button onClick={() => setIsDestroyed(true)}>销毁组件</button>
+      <button onClick={onDestroy}>销毁组件</button>
+    </div>
+  );
+}
+
+function App() {
+  const [showCounter, setShowCounter] = useState(true);
+
+  const handleDestroy = () => {
+    setShowCounter(false);
+  };
+
+  const handleRecreate = () => {
+    setShowCounter(true);
+  };
+
+  return (
+    <div>
+      {showCounter ? <Counter onDestroy={handleDestroy} /> : null}
+      <button onClick={handleRecreate}>重新创建组件</button>
     </div>
   );
 }
