@@ -1,51 +1,28 @@
+useState的初始值@不是一个有效的JavaScript值。
+useEffect的使用方法不正确。它应该接收两个参数，第一个是一个函数，第二个是一个数组。第一个函数中的副作用（如数据获取，订阅等）在第二个参数列表中的值发生改变时执行。你的useEffect缺少了这两个参数。
+if语句不能直接在组件函数中使用，它需要被包裹在一个useEffect、useMemo、useCallback或其他的逻辑函数中
 import React, { useState, useEffect } from 'react';
 
-// Counter组件，接收count，setCount状态和销毁组件的回调函数onDestroy作为props
-function Counter({ count, setCount, onDestroy }) {
-  // 使用useEffect启动定时器
+function Demo() {
+  const [count, setCount] = useState(0); // 我假设你可能希望初始值为0
+  const [range, setRange] = useState('<= 5');
+
+  // 当count发生变化时，根据count的值更新range
   useEffect(() => {
-    const timer = setInterval(() => {
-      // 定时器每秒执行一次，将count状态加一
-      setCount(prevCount => prevCount + 1);
-    }, 1000); 
-
-    // 在组件卸载时清除定时器
-    return () => {
-      clearInterval(timer);
-    };
-  }, [setCount]);
+    if (count > 5) {
+      setRange('> 5');
+    } else {
+      setRange('<= 5');
+    }
+  }, [count]); // 我们在这里将count添加为依赖项，当count变化时执行此副作用
 
   return (
     <div>
-      <p>Count: {count}</p>
-      <button onClick={onDestroy}>销毁组件</button>
+      <p>Current Count: {count}</p>
+      <p>Range: {range}</p>
+      <button onClick={() => setCount(count + 1)}>ADD</button>
     </div>
   );
 }
 
-function App() {
-  // 将count状态提升到App组件，使其在Counter组件销毁后仍然可以被保存和访问
-  const [count, setCount] = useState(0);
-  // showCounter状态用于控制Counter组件是否显示
-  const [showCounter, setShowCounter] = useState(true);
-
-  const handleDestroy = () => {
-    // 在销毁按钮点击后，隐藏Counter组件
-    setShowCounter(false);
-  };
-
-  const handleRecreate = () => {
-    // 在重新创建按钮点击后，显示Counter组件
-    setShowCounter(true);
-  };
-
-  return (
-    <div>
-      {/* 根据showCounter状态决定是否渲染Counter组件，并传递count，setCount，和handleDestroy作为props */}
-      {showCounter ? <Counter count={count} setCount={setCount} onDestroy={handleDestroy} /> : null}
-      <button onClick={handleRecreate}>重新创建组件</button>
-    </div>
-  );
-}
-
-export default App;
+export default Demo;
