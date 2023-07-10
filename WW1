@@ -1,28 +1,37 @@
-useState的初始值@不是一个有效的JavaScript值。
-useEffect的使用方法不正确。它应该接收两个参数，第一个是一个函数，第二个是一个数组。第一个函数中的副作用（如数据获取，订阅等）在第二个参数列表中的值发生改变时执行。你的useEffect缺少了这两个参数。
-if语句不能直接在组件函数中使用，它需要被包裹在一个useEffect、useMemo、useCallback或其他的逻辑函数中
-import React, { useState, useEffect } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 
-function Demo() {
-  const [count, setCount] = useState(0); // 我假设你可能希望初始值为0
-  const [range, setRange] = useState('<= 5');
+// 创建一个context对象
+const UserContext = createContext();
 
-  // 当count发生变化时，根据count的值更新range
-  useEffect(() => {
-    if (count > 5) {
-      setRange('> 5');
-    } else {
-      setRange('<= 5');
-    }
-  }, [count]); // 我们在这里将count添加为依赖项，当count变化时执行此副作用
+function App() {
+  const [user, setUser] = useState(null);
 
   return (
-    <div>
-      <p>Current Count: {count}</p>
-      <p>Range: {range}</p>
-      <button onClick={() => setCount(count + 1)}>ADD</button>
-    </div>
+    <UserContext.Provider value={{ user, setUser }}>
+      <div>
+        {user ? <p>你好, {user}</p> : <p>请登录</p>}
+        <LoginButton />
+      </div>
+    </UserContext.Provider>
   );
 }
 
-export default Demo;
+function LoginButton() {
+  const { user, setUser } = useContext(UserContext);
+
+  const handleLoginLogout = () => {
+    if (user) {
+      // logout
+      setUser(null);
+    } else {
+      // login, 在实际的应用中，你可能需要让用户输入用户名或者从API获取用户名
+      setUser('XX');
+    }
+  };
+
+  return (
+    <button onClick={handleLoginLogout}>{user ? 'Logout' : 'Login'}</button>
+  );
+}
+
+export default App;
